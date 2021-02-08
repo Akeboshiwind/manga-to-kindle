@@ -51,18 +51,36 @@ if (!args["chapter-id"])
 // >> Make request to mangadex api
 
 let client = api.agent.login(args.username, args.password, false);
-let chapter = client.then(async () => {
-    return api.Chapter.get(args["chapter-id"]);
-});
+
+let manga_info = client
+    .then(async () => {
+        return api.Chapter.get(args["chapter-id"]);
+    })
+    .then(async chapter => {
+        var manga = api.Manga.get(chapter.parentMangaID)
+        return Promise.all([manga, chapter])
+    });
 
 
 
 // >> Output
 
+let fileSafeName = str => {
+    return str.replace(/[^a-z0-9 ]/gi, '').toLowerCase();
+}
+
 // The output format is:
 // {title}
 // {page urls}
-chapter.then(async chapter => {
-    console.log(chapter.title);
-    console.log(chapter.pages.join("\n"));
-});
+manga_info
+    .then(async values => {
+        let manga = values[0];
+        let chapter = values[1];
+
+        let title = `${fileSafeName(manga.title)} - ${chapter.chapter}`;
+        if (chapter.title)
+            title += ` = ${fileSafeName(chapter.title)}`
+
+        console.log(title);
+        console.log(chapter.pages.join("\n"));
+    });
