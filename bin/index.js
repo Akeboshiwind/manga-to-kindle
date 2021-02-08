@@ -2,6 +2,14 @@
 
 const api = require("mangadex-full-api");
 
+// Included because I think mangadex-full-api has an
+// unhandledRejection of a promise
+// NOTE: Hack
+process.on('unhandledRejection', (reason, p) => {
+    console.error(reason, p);
+    process.exit(1);
+});
+
 
 // >> Parse arguments
 
