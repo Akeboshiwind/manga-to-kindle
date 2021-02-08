@@ -1,0 +1,20 @@
+{
+  "name": "manga-to-kindle",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bin/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "bin": {
+    "hello": "./bin/index.js"
+  },
+  "dependencies": {
+    "mangadex-full-api": "^4.2.0",
+    "node-fetch": "^2.6.1",
+    "pdfkit": "^0.11.0",
+    "temp-dir": "^2.0.0"
+  }
+}
