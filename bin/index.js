@@ -53,8 +53,8 @@ function fileSafeName(str) {
 
 async function main() {
 
-    // >> Make request to mangadex api
-    let client = await api.agent.login(args.username, args.password, false);
+    // >> Log into the api
+    await api.agent.login(args.username, args.password, false);
 
     let chapter = await api.Chapter.get(args["chapter-id"]);
     var manga = await api.Manga.get(chapter.parentMangaID)
