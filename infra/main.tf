@@ -45,7 +45,7 @@ data "aws_iam_policy_document" "lambda_trust_policy" {
 }
 
 resource "aws_iam_role" "lambda_role" {
-  name = "${locals.function_name}_lambda_role"
+  name = "${local.function_name}_lambda_role"
   assume_role_policy = data.aws_iam_policy_document.lambda_trust_policy.json
 }
 
@@ -54,7 +54,7 @@ data "aws_iam_policy" "basic_lambda_policy" {
 }
 
 resource "aws_iam_policy_attachment" "lambda_role_attachment" {
-  name       = "${locals.function_name}_lambda_role_attachment"
+  name       = "${local.function_name}_lambda_role_attachment"
   roles      = [aws_iam_role.lambda_role.name]
   policy_arn = data.aws_iam_policy.basic_lambda_policy.arn
 }
@@ -71,7 +71,7 @@ data "archive_file" "lambda_source" {
 
 resource "aws_lambda_function" "lambda" {
   filename      = data.archive_file.lambda_source.output_path
-  function_name = "${locals.function_name}"
+  function_name = local.function_name
   role          = aws_iam_role.lambda_role.arn
   handler       = "bundle.index.handler"
 
