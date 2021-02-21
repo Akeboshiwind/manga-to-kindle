@@ -5,6 +5,16 @@
 help:
 	@grep -E '[a-zA-Z\.\-]+:.*?@ .*$$' $(MAKEFILE_LIST) | tr -d '#' | awk 'BEGIN {FS = ":.*?@ "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
+#run: @ Run the app locally
+.PHONY: run
+run: deps.install
+	ts-node src/index.ts
+
+#deps.install: @ Install dependencies
+.PHONY: deps.install
+deps.install:
+	npm install
+
 #deploy: @ Deploy the bot to AWS Lambda
 .PHONY: deploy
 deploy: deploy.init deploy.apply
