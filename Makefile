@@ -7,7 +7,7 @@ help:
 
 #run: @ Run the app locally
 .PHONY: run
-run: deps.install
+run: deps.install test.lint
 	ts-node src/index.ts
 
 #deps.install: @ Install dependencies
@@ -15,9 +15,19 @@ run: deps.install
 deps.install:
 	npm install
 
+#build: @ Build the project
+.PHONY: build
+build: deps.install
+	tsc
+
+#test.lint: @ Lint the project
+.PHONY: test.lint
+test.lint: deps.install
+	./node_modules/.bin/tslint -c tslint.json 'src/**/*.ts'
+
 #deploy: @ Deploy the bot to AWS Lambda
 .PHONY: deploy
-deploy: deploy.init deploy.apply
+deploy: build test.lint deploy.init deploy.apply
 
 #deploy.init: @ Initialize terraform
 .PHONY: deploy.init
