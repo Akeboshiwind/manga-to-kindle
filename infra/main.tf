@@ -13,6 +13,12 @@ provider "aws" {
 
 provider "archive" {}
 
+# >> Variables
+
+variable "bot_token" {
+  type = string
+}
+
 # >> Setup policy
 
 data "aws_iam_policy_document" "manga_bot_lambda_trust_policy" {
@@ -59,9 +65,11 @@ resource "aws_lambda_function" "manga_bot_lambda" {
 
   runtime = "nodejs14.x"
 
-  # environment {
-  #   variables = {
-  #     foo = "bar"
-  #   }
-  # }
+  environment {
+    variables = {
+      BOT_TOKEN = var.bot_token
+      # TODO: Add secret
+      # BOT_HOOK_PATH = "${var.bot_secret}/"
+    }
+  }
 }

@@ -1,4 +1,5 @@
 .DEFAULT_GOAL := help
+node_bin_path=./node_modules/.bin
 
 #help:	@ List available tasks on this project
 .PHONY: help
@@ -18,12 +19,12 @@ deps.install:
 #build: @ Build the project
 .PHONY: build
 build: deps.install
-	tsc
+	${node_bin_path}/tsc
 
 #test.lint: @ Lint the project
 .PHONY: test.lint
 test.lint: deps.install
-	./node_modules/.bin/tslint -c tslint.json 'src/**/*.ts'
+	${node_bin_path}/tslint -c tslint.json 'src/**/*.ts'
 
 #deploy: @ Deploy the bot to AWS Lambda
 .PHONY: deploy
@@ -37,4 +38,4 @@ deploy.init:
 #deploy.apply: @ Apply the terraform
 .PHONY: deploy.apply
 deploy.apply:
-	cd infra; terraform apply
+	cd infra; terraform apply -var "bot_token=$(shell gopass show personal/bots/manga-to-kindle token)"
