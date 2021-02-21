@@ -13,25 +13,35 @@ provider "aws" {
 
 provider "archive" {}
 
-resource "aws_iam_role" "manga_bot_lamba_role" {
-  name = "manga_bot_lamba_role"
+# >> Setup policy
 
-  assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": "lambda.amazonaws.com"
-      },
-      "Effect": "Allow",
-      "Sid": ""
+data "aws_iam_policy_document" "manga_bot_lambda_trust_policy" {
+  statement {
+    actions    = ["sts:AssumeRole"]
+    effect     = "Allow"
+    principals {
+      type        = "Service"
+      identifiers = ["lambda.amazonaws.com"]
     }
-  ]
+  }
 }
-EOF
+
+resource "aws_iam_role" "manga_bot_lambda_role" {
+  name = "manga_bot_lambda_role"
+  assume_role_policy = data.aws_iam_policy_document.manga_bot_lambda_trust_policy.json
 }
+
+data "aws_iam_policy" "basic_lambda_policy" {
+  arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+resource "aws_iam_policy_attachment" "manga_bot_lambda_role_attachment" {
+  name       = "tmanga_bot_lambda_role_attachmen"
+  roles      = [aws_iam_role.manga_bot_lambda_role.name]
+  policy_arn = data.aws_iam_policy.basic_lambda_policy.arn
+}
+
+# >> Setup lambda
 
 data "archive_file" "lambda_source" {
   type        = "zip"
@@ -39,10 +49,10 @@ data "archive_file" "lambda_source" {
   output_path = "../dist/index.js.zip"
 }
 
-resource "aws_lambda_function" "manga_bot_lamba" {
+resource "aws_lambda_function" "manga_bot_lambda" {
   filename      = data.archive_file.lambda_source.output_path
   function_name = "manga_bot"
-  role          = aws_iam_role.manga_bot_lamba_role.arn
+  role          = aws_iam_role.manga_bot_lambda_role.arn
   handler       = "index.handler"
 
   source_code_hash = data.archive_file.lambda_source.output_base64sha256
