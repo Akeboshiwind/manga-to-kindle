@@ -1,5 +1,4 @@
 .DEFAULT_GOAL := help
-node_bin_path=./node_modules/.bin
 
 #help:	@ List available tasks on this project
 .PHONY: help
@@ -19,12 +18,12 @@ deps.install:
 #build: @ Build the project
 .PHONY: build
 build: deps.install
-	${node_bin_path}/tsc
+	npx webpack
 
 #test.lint: @ Lint the project
 .PHONY: test.lint
 test.lint: deps.install
-	${node_bin_path}/tslint -c tslint.json 'src/**/*.ts'
+	npx tslint -c tslint.json 'src/**/*.ts'
 
 #deploy: @ Deploy the bot to AWS Lambda
 .PHONY: deploy

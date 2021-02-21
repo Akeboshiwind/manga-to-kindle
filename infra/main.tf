@@ -51,15 +51,15 @@ resource "aws_iam_policy_attachment" "manga_bot_lambda_role_attachment" {
 
 data "archive_file" "lambda_source" {
   type        = "zip"
-  source_file = "../dist/index.js"
-  output_path = "../dist/index.js.zip"
+  source_file = "../dist/bundle.js"
+  output_path = "../dist/bundle.js.zip"
 }
 
 resource "aws_lambda_function" "manga_bot_lambda" {
   filename      = data.archive_file.lambda_source.output_path
   function_name = "manga_bot"
   role          = aws_iam_role.manga_bot_lambda_role.arn
-  handler       = "index.handler"
+  handler       = "bundle.index.handler"
 
   source_code_hash = data.archive_file.lambda_source.output_base64sha256
 
