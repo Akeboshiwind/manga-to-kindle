@@ -43,7 +43,7 @@ resource "aws_lambda_function" "manga_bot_lamba" {
   filename      = data.archive_file.lambda_source.output_path
   function_name = "manga_bot"
   role          = aws_iam_role.manga_bot_lamba_role.arn
-  handler       = "exports.handler"
+  handler       = "index.handler"
 
   source_code_hash = data.archive_file.lambda_source.output_base64sha256
 
