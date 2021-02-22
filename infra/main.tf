@@ -150,8 +150,6 @@ resource "aws_lambda_function" "lambda" {
       BOT_TOKEN = var.bot_token
       # TODO: Add secret
       BOT_HOOK_PATH = "/${aws_api_gateway_resource.resource.path_part}/"
-      # TODO: Make work without cycle
-      #BOT_HOOK_PATH = "/${aws_api_gateway_stage.stage.stage_name}/${aws_api_gateway_resource.resource.path_part}/"
       DEBUG = "*"
     }
   }
