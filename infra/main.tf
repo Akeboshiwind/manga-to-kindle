@@ -152,6 +152,7 @@ resource "aws_lambda_function" "lambda" {
       BOT_HOOK_PATH = "/v1/manga_to_kindle/"
       # TODO: Make work without cycle
       #BOT_HOOK_PATH = "/${aws_api_gateway_stage.stage.stage_name}/${aws_api_gateway_resource.resource.path_part}/"
+      DEBUG = "*"
     }
   }
 }
