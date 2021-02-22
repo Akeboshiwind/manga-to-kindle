@@ -1,5 +1,5 @@
 import { Telegraf } from 'telegraf'
-import { Handler } from 'aws-lambda'
+import makeHandler from 'lambda-request-handler'
 
 const token = process.env.BOT_TOKEN;
 
@@ -13,6 +13,4 @@ const bot = new Telegraf(token, {
 
 bot.start((ctx) => ctx.reply('Hello'));
 
-export const handler: Handler = async (_event, _context) => {
-    bot.webhookCallback(process.env.BOT_HOOK_PATH ?? '/');
-};
+makeHandler(bot.webhookCallback(process.env.BOT_HOOK_PATH ?? '/'));
