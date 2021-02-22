@@ -30,10 +30,13 @@ variable "account_id" {
 # >> Locals
 
 locals {
-  function_name = "manga_to_kindle"
-
   # Needed for lambda permission
   region        = "eu-west-3"
+
+  function_name = "manga_to_kindle"
+
+  # API Gateway setup
+  stage_name = "v1"
 }
 
 
@@ -92,7 +95,7 @@ resource "aws_api_gateway_deployment" "deployment" {
 resource "aws_api_gateway_stage" "stage" {
   deployment_id = aws_api_gateway_deployment.deployment.id
   rest_api_id   = aws_api_gateway_rest_api.rest_api.id
-  stage_name    = "v1"
+  stage_name    = local.stage_name
 }
 
 
