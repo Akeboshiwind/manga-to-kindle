@@ -13,4 +13,6 @@ const bot = new Telegraf(token, {
 
 bot.start((ctx) => ctx.reply('Hello'));
 
-makeHandler(bot.webhookCallback(process.env.BOT_HOOK_PATH ?? '/'));
+export const handler = makeHandler(
+    bot.webhookCallback(process.env.BOT_HOOK_PATH ?? '/')
+);
