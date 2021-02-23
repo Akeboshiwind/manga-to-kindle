@@ -11,7 +11,13 @@ const bot = new Telegraf(token, {
   telegram: { webhookReply: true }
 });
 
-bot.start((ctx) => ctx.reply('Hello'));
+// [^\s] matches things that aren't whitespace
+// So this whole regex matches a whole mangadex url
+const mangadex_regex = /[^\s]*mangadex\.org[^\s]*/;
+
+bot.hears(mangadex_regex, (ctx) => {
+    ctx.reply(`With match: ${ctx.match}`);
+});
 
 export const handler = makeHandler(
     bot.webhookCallback(process.env.BOT_HOOK_PATH ?? '/')
