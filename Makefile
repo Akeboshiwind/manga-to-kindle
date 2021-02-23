@@ -39,5 +39,7 @@ deploy.init:
 deploy.apply:
 	$(eval BOT_TOKEN=$(shell gopass show personal/bots/manga-to-kindle token))
 	$(eval ACCOUNT_ID=$(shell gopass show personal/aws/Administrator/amazon.com 'Account ID'))
-	cd infra; terraform apply -var "bot_token=$(BOT_TOKEN)" -var "account_id=$(ACCOUNT_ID)"
+	$(eval MANGADEX_USERNAME=$(shell gopass show personal/mangadex.org username))
+	$(eval MANGADEX_PASSWORD=$(shell gopass show --password personal/mangadex.org))
+	cd infra; terraform apply -var "bot_token=$(BOT_TOKEN)" -var "account_id=$(ACCOUNT_ID)" -var "mangadex_username=$(MANGADEX_USERNAME)" -var "mangadex_password=$(MANGADEX_PASSWORD)"
 	curl "https://api.telegram.org/bot$(BOT_TOKEN)/setWebHook?url=$$(cd infra; terraform output webhook_url)"

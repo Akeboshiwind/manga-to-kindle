@@ -25,6 +25,14 @@ variable "account_id" {
   type = string
 }
 
+variable "mangadex_username" {
+  type = string
+}
+
+variable "mangadex_password" {
+  type = string
+}
+
 
 
 # >> Locals
@@ -153,6 +161,8 @@ resource "aws_lambda_function" "lambda" {
       BOT_TOKEN = var.bot_token
       # TODO: Add secret
       BOT_HOOK_PATH = "/${aws_api_gateway_resource.resource.path_part}/"
+      MANGADEX_USERNAME = var.mangadex_username
+      MANGADEX_PASSWORD = var.mangadex_password
       DEBUG = "*"
     }
   }
