@@ -1,24 +1,11 @@
 import { Telegraf } from 'telegraf'
 import makeHandler from 'lambda-request-handler'
 import api from 'mangadex-full-api'
+import { config } from './config'
+import d from 'debug'
+const debug = d('manga_to_kindle');
 
-const token = process.env.BOT_TOKEN;
-const mangadexUsername = process.env.MANGADEX_USERNAME;
-const mangadexPassword = process.env.MANGADEX_PASSWORD;
-
-if (token === undefined) {
-  throw new Error('BOT_TOKEN must be provided!')
-}
-
-if (mangadexUsername === undefined) {
-  throw new Error('MANGADEX_USERNAME must be provided!')
-}
-
-if (mangadexPassword === undefined) {
-  throw new Error('MANGADEX_PASSWORD must be provided!')
-}
-
-const bot = new Telegraf(token, {
+const bot = new Telegraf(config.bot.token, {
   telegram: { webhookReply: true }
 });
 
@@ -29,7 +16,11 @@ interface MangaInfo {
     mangaName: string,
 }
 
-const client = api.agent.login(mangadexUsername, mangadexPassword, false);
+const client = api.agent.login(config.mangadex.username,
+                               config.mangadex.password,
+                               // Don't bother cacheing the login
+                               false);
+
 async function getMangaInfo(chapterId: number): Promise<MangaInfo> {
 
     await client;
@@ -54,8 +45,12 @@ async function getMangaInfo(chapterId: number): Promise<MangaInfo> {
 const mangadexChapterRegex = /[^\s]*mangadex\.org\/chapter\/(\d*)[^\s]*/;
 
 bot.hears(mangadexChapterRegex, async (ctx) => {
+    // Get manga info
+    debug("Mangadex chapter link detected");
     const chapterId = parseInt(ctx.match[1], 10);
     const mangaInfo = await getMangaInfo(chapterId);
+
+    // Send message with manga info
     ctx.reply(`Chapter Id: ${mangaInfo.chapterId}
 Chapter Name: ${mangaInfo.chapterName}
 Page Count: ${mangaInfo.pageCount}
