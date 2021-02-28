@@ -2,6 +2,7 @@
 
 interface BotConfig {
     token: string,
+    hook_path: string,
 }
 
 interface MangadexConfig {
@@ -10,8 +11,8 @@ interface MangadexConfig {
 }
 
 interface EmailConfig {
-    email: string,
-    password: string,
+    from: string,
+    to: string,
 }
 
 interface Config {
@@ -40,14 +41,15 @@ function getEnv(key: string): string {
 export const config: Config = {
     bot: {
         token: getEnv("BOT_TOKEN"),
+        hook_path: getEnv("BOT_HOOK_PATH"),
     },
     mangadex: {
         username: getEnv("MANGADEX_USERNAME"),
         password: getEnv("MANGADEX_PASSWORD"),
     },
     email: {
-        email: getEnv("GMAIL_EMAIL"),
-        password: getEnv("GMAIL_PASSWORD"),
+        from: getEnv("FROM_EMAIL"),
+        to: getEnv("TO_EMAIL"),
     },
 }
 

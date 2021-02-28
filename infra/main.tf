@@ -33,11 +33,11 @@ variable "mangadex_password" {
   type = string
 }
 
-variable "gmail_email" {
+variable "from_email" {
   type = string
 }
 
-variable "gmail_password" {
+variable "to_email" {
   type = string
 }
 
@@ -171,8 +171,8 @@ resource "aws_lambda_function" "lambda" {
       BOT_HOOK_PATH = "/${aws_api_gateway_resource.resource.path_part}/"
       MANGADEX_USERNAME = var.mangadex_username
       MANGADEX_PASSWORD = var.mangadex_password
-      GMAIL_EMAIL = var.gmail_email
-      GMAIL_PASSWORD = var.gmail_password
+      FROM_EMAIL = var.from_email
+      TO_EMAIL = var.to_email
       DEBUG = "*"
     }
   }

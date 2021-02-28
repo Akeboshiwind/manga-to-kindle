@@ -12,6 +12,7 @@
     "hello": "./bin/index.js"
   },
   "dependencies": {
+    "aws-sdk": "^2.853.0",
     "debug": "^4.3.1",
     "lambda-request-handler": "^0.5.1-alpha1",
     "mangadex-full-api": "^4.2.0",

@@ -28,5 +28,5 @@ Manga Name: ${mangaInfo.mangaName}`);
 });
 
 export const handler = makeHandler(
-    bot.webhookCallback(process.env.BOT_HOOK_PATH ?? '/')
+    bot.webhookCallback(config.bot.hook_path)
 );
