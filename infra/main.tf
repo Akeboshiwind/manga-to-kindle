@@ -134,14 +134,44 @@ resource "aws_iam_role" "lambda_role" {
   assume_role_policy = data.aws_iam_policy_document.lambda_trust_policy.json
 }
 
-data "aws_iam_policy" "basic_lambda_policy" {
-  arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+data "aws_iam_policy_document" "lambda_execution_policy_doc" {
+  # Can write logs
+  statement {
+    actions = [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+    ]
+    effect = "Allow"
+    resources = ["*"]
+  }
+
+  # Can send email
+  statement {
+    actions = ["ses:SendRawEmail"]
+    effect  = "Allow"
+    resources = [
+      "arn:aws:ses:eu-west-3:${var.account_id}:identity/${split("@", var.from_email)[1]}",
+    ]
+    condition {
+      test = "StringLike"
+      variable = "ses:FromAddress"
+      values = [
+        var.from_email
+      ]
+    }
+  }
+}
+
+resource "aws_iam_policy" "basic_lambda_policy" {
+  name = "${local.function_name}_lambda_execution_policy"
+  policy = data.aws_iam_policy_document.lambda_execution_policy_doc.json
 }
 
 resource "aws_iam_policy_attachment" "lambda_role_attachment" {
   name       = "${local.function_name}_lambda_role_attachment"
   roles      = [aws_iam_role.lambda_role.name]
-  policy_arn = data.aws_iam_policy.basic_lambda_policy.arn
+  policy_arn = aws_iam_policy.basic_lambda_policy.arn
 }
 
 
