@@ -9,15 +9,26 @@ interface MangadexConfig {
     password: string,
 }
 
+interface EmailConfig {
+    email: string,
+    password: string,
+}
+
 interface Config {
     bot: BotConfig,
     mangadex: MangadexConfig,
+    email: EmailConfig,
 }
 
 
 
-// >> Ensure required
+// >> Load config
 
+/**
+ * Load given environment variable and throw an exception if it doesn't exist
+ * @param {string} key - The environment variable key
+ * @return {string} The value of the environment variable
+ */
 function getEnv(key: string): string {
     const value = process.env[key];
     if (value === undefined) {
@@ -34,4 +45,9 @@ export const config: Config = {
         username: getEnv("MANGADEX_USERNAME"),
         password: getEnv("MANGADEX_PASSWORD"),
     },
+    email: {
+        email: getEnv("GMAIL_EMAIL"),
+        password: getEnv("GMAIL_PASSWORD"),
+    },
 }
+

@@ -16,6 +16,7 @@
     "lambda-request-handler": "^0.5.1-alpha1",
     "mangadex-full-api": "^4.2.0",
     "node-fetch": "^2.6.1",
+    "nodemailer": "^6.4.18",
     "pdfkit": "^0.11.0",
     "telegraf": "^4.0.3",
     "temp-dir": "^2.0.0"
@@ -23,6 +24,7 @@
   "devDependencies": {
     "@types/debug": "^4.1.5",
     "@types/node": "^14.14.31",
+    "@types/nodemailer": "^6.4.0",
     "ts-loader": "^8.0.17",
     "ts-node": "^9.1.1",
     "tslint": "^6.1.3",

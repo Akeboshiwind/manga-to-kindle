@@ -41,5 +41,14 @@ deploy.apply:
 	$(eval ACCOUNT_ID=$(shell gopass show personal/aws/Administrator/amazon.com 'Account ID'))
 	$(eval MANGADEX_USERNAME=$(shell gopass show personal/mangadex.org username))
 	$(eval MANGADEX_PASSWORD=$(shell gopass show --password personal/mangadex.org))
-	cd infra; terraform apply -var "bot_token=$(BOT_TOKEN)" -var "account_id=$(ACCOUNT_ID)" -var "mangadex_username=$(MANGADEX_USERNAME)" -var "mangadex_password=$(MANGADEX_PASSWORD)"
+	$(eval GMAIL_EMAIL=$(shell gopass show personal/backups/photos/google.com username))
+	$(eval GMAIL_PASSWORD=$(shell gopass show --password personal/backups/photos/google.com))
+	cd infra; terraform apply \
+		                -var "bot_token=$(BOT_TOKEN)" \
+						-var "account_id=$(ACCOUNT_ID)" \
+						-var "mangadex_username=$(MANGADEX_USERNAME)" \
+						-var "mangadex_password=$(MANGADEX_PASSWORD)" \
+						-var "gmail_email=$(GMAIL_EMAIL)" \
+						-var "gmail_password=$(GMAIL_PASSWORD)"
 	curl "https://api.telegram.org/bot$(BOT_TOKEN)/setWebHook?url=$$(cd infra; terraform output webhook_url)"
+
