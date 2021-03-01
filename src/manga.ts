@@ -1,4 +1,5 @@
 import api from 'mangadex-full-api'
+import retry from 'async-retry'
 import { config } from './config'
 
 import d from 'debug'
@@ -25,9 +26,22 @@ export async function getMangaInfo(chapterId: number): Promise<MangaInfo> {
     debug("Loading manga info")
 
     await client;
-    const chapter = await api.Chapter.get(chapterId);
-    // @ts-ignore
-    const manga = await api.Manga.get(chapter.parentMangaID)
+    const chapter = await retry(async _bail => {
+        return await api.Chapter.get(chapterId);
+    }, {
+        onRetry: (err, attempt) => {
+            debug("Retry (%d), got error %s", attempt, err);
+        }
+    });
+
+    const manga = await retry(async _bail => {
+        // @ts-ignore
+        return await api.Manga.get(chapter.parentMangaID)
+    }, {
+        onRetry: (err, attempt) => {
+            debug("Retry (%d), got error %s", attempt, err);
+        }
+    });
 
     return {
         chapterId,
