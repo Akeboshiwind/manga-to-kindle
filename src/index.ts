@@ -3,6 +3,7 @@ import makeHandler from 'lambda-request-handler'
 import { config } from './config'
 import * as manga from './manga'
 import * as email from './email'
+import { format } from 'util'
 
 import d from 'debug'
 const debug = d('mtk:index');
@@ -21,10 +22,7 @@ bot.hears(manga.chapterURLRegex, async (ctx) => {
 
     debug("Replying to message with chapter info");
     // Send message with manga info
-    ctx.reply(`Chapter Id: ${mangaInfo.chapterId}
-Chapter Name: ${mangaInfo.chapterName}
-Page Count: ${mangaInfo.pageCount}
-Manga Name: ${mangaInfo.mangaName}`);
+    ctx.reply(format("%j", mangaInfo));
 });
 
 export const handler = makeHandler(

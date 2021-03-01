@@ -2,6 +2,7 @@ import nodemailer from 'nodemailer'
 import SES from 'aws-sdk/clients/ses'
 import { MangaInfo } from './manga'
 import { config } from './config'
+import { format } from 'util'
 
 import d from 'debug'
 const debug = d('mtk:email');
@@ -14,10 +15,7 @@ const transporter = nodemailer.createTransport({
 export async function emailMangaInfo(info: MangaInfo): Promise<void> {
     debug("Sending mangaInfo email")
 
-    const text = `Chapter Id: ${info.chapterId}
-Chapter Name: ${info.chapterName}
-Page Count: ${info.pageCount}
-Manga Name: ${info.mangaName}`;
+    const text = format("%j", info);
 
     await transporter.sendMail({
         from: config.email.from,

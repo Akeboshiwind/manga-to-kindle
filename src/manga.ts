@@ -6,10 +6,9 @@ import d from 'debug'
 const debug = d('mtk:manga');
 
 export interface MangaInfo {
-    chapterId: number,
-    pageCount: number,
     chapterName: string,
     mangaName: string,
+    pageLinks: string[],
 }
 
 const client = api.agent.login(config.mangadex.username,
@@ -44,12 +43,11 @@ export async function getMangaInfo(chapterId: number): Promise<MangaInfo> {
     });
 
     return {
-        chapterId,
         // @ts-ignore
         chapterName: `${chapter.title} - ${chapter.chapter}`,
         // @ts-ignore
-        pageCount: chapter.pages.length,
-        // @ts-ignore
         mangaName: `${manga.title}`,
+        // @ts-ignore
+        pageLinks: chapter.pages,
     }
 }
