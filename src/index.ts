@@ -3,6 +3,9 @@ import makeHandler from 'lambda-request-handler'
 import { config } from './config'
 import * as manga from './manga'
 import * as email from './email'
+import * as download from './download'
+import * as pdf from './pdf'
+import * as zip from './zip'
 import { format } from 'util'
 
 import d from 'debug'
@@ -16,13 +19,17 @@ bot.hears(manga.chapterURLRegex, async (ctx) => {
     // Get manga info
     debug("Mangadex chapter link detected");
     const chapterId = parseInt(ctx.match[1], 10);
-    const mangaInfo = await manga.getMangaInfo(chapterId);
+    const info = await manga.getMangaInfo(chapterId);
 
-    await email.emailMangaInfo(mangaInfo);
+    const pageBuffs = await download.downloadPages(info.pageLinks);
+    const pdfStream = await pdf.buildPDF(pageBuffs);
+    const zipStream = await zip.zipStream(pdfStream, info.mangaName);
+
+    await email.emailMangaPDF(zipStream, info);
 
     debug("Replying to message with chapter info");
-    // Send message with manga info
-    ctx.reply(format("%j", mangaInfo));
+
+    ctx.reply(format("%j", info));
 });
 
 export const handler = makeHandler(

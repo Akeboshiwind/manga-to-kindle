@@ -26,7 +26,14 @@ export async function getMangaInfo(chapterId: number): Promise<MangaInfo> {
 
     await client;
     const chapter = await retry(async _bail => {
-        return await api.Chapter.get(chapterId);
+        const resp = await api.Chapter.get(chapterId);
+        // TODO: Work out if still needed
+        // @ts-ignore
+        // if (resp.pages[0].includes("s1.mangadex.org")) {
+        //     // TODO: Remove
+        //     throw new Error("Page url uses s1 domain");
+        // }
+        return resp;
     }, {
         onRetry: (err, attempt) => {
             debug("Retry (%d), got error %s", attempt, err);
