@@ -189,6 +189,7 @@ resource "aws_lambda_function" "lambda" {
   function_name = local.function_name
   role          = aws_iam_role.lambda_role.arn
   handler       = "bundle.index.handler"
+  timeout       = 300
 
   source_code_hash = data.archive_file.lambda_source.output_base64sha256
 
