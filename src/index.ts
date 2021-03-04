@@ -23,6 +23,7 @@ bot.hears(manga.chapterURLRegex, async (ctx) => {
 
     const pageBuffs = await download.downloadPages(info.pageLinks);
     const pdfStream = await pdf.buildPDF(pageBuffs);
+    // TODO: Change name
     const zipStream = await zip.zipStream(pdfStream, info.mangaName);
 
     await email.emailMangaPDF(zipStream, info);
