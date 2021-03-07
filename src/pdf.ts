@@ -1,6 +1,5 @@
-import PdfPrinter from 'pdfmake'
+import * as pdfMake from 'pdfmake/build/pdfmake'
 import { TDocumentDefinitions, Content, ContentImage } from 'pdfmake/interfaces'
-
 import d from 'debug'
 const debug = d('mtk:pdf');
 
@@ -8,8 +7,6 @@ const kindleDimensions = {
     width: 1264,
     height: 1680,
 }
-
-const printer = new PdfPrinter({});
 
 export async function buildPDF(pageBuffs: Buffer[]): Promise<NodeJS.ReadableStream> {
     debug("Building PDF");
@@ -45,8 +42,7 @@ export async function buildPDF(pageBuffs: Buffer[]): Promise<NodeJS.ReadableStre
     };
 
     debug("Creating pdf");
-    const pdfDoc = printer.createPdfKitDocument(docDef);
-
+    const pdfDoc = pdfMake.createPdf(docDef).getStream();
     pdfDoc.end();
 
     return pdfDoc;
