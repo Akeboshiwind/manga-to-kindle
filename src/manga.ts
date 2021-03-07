@@ -1,5 +1,5 @@
 import api from 'mangadex-full-api'
-import retry from 'async-retry'
+import retry from './retry'
 import { config } from './config'
 
 import d from 'debug'
@@ -11,10 +11,14 @@ export interface MangaInfo {
     pageLinks: string[],
 }
 
-const client = api.agent.login(config.mangadex.username,
-                               config.mangadex.password,
-                               // Don't bother cacheing the login
-                               false);
+const client = retry(async (_bail) => {
+    return await api.agent.login(config.mangadex.username,
+                           config.mangadex.password,
+                           // Don't bother cacheing the login
+                           false);
+}, {
+    retryLimitMessage: "Failed to log in to Mangadex api"
+});
 
 // [^\s] matches things that aren't whitespace
 // (\d*) matches a group of digits, which should be the chapter id
@@ -35,18 +39,14 @@ export async function getMangaInfo(chapterId: number): Promise<MangaInfo> {
         // }
         return resp;
     }, {
-        onRetry: (err, attempt) => {
-            debug("Retry (%d), got error %s", attempt, err);
-        }
+        retryLimitMessage: "Failed to get chapter info from Mangadex",
     });
 
     const manga = await retry(async _bail => {
         // @ts-ignore
         return await api.Manga.get(chapter.parentMangaID)
     }, {
-        onRetry: (err, attempt) => {
-            debug("Retry (%d), got error %s", attempt, err);
-        }
+        retryLimitMessage: "Failed to get manga info from Mangadex",
     });
 
     return {

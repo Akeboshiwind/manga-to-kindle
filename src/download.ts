@@ -1,5 +1,5 @@
 import fetch from 'node-fetch'
-import retry from 'async-retry'
+import retry from './retry'
 
 import d from 'debug'
 const debug = d('mtk:download');
@@ -15,9 +15,8 @@ export async function downloadPages(pageLinks: string[]): Promise<Buffer[]> {
             const resp = await fetch(link);
             return await resp.buffer();
         },{
-            onRetry: (err, attempt) => {
-                debug("Retry (%d), got error %s", attempt, err);
-        }});
+            retryLimitMessage: "Failed to download page image"
+        });
 
         imageBuffs.push(pageBuf);
     }
