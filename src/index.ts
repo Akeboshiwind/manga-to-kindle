@@ -33,6 +33,15 @@ bot.hears(manga.chapterURLRegex, async (ctx) => {
     ctx.reply(format("%j", info));
 });
 
+bot.on('text', async (ctx) => {
+    ctx.reply(`Did not recognise '${ctx.message.text}'`);
+});
+
+bot.catch(async (err, ctx) => {
+    debug("Telegraf caught error, reporting to user %s", err);
+    ctx.reply(`Failed with error: ${err}`)
+});
+
 export const handler = makeHandler(
     bot.webhookCallback(config.bot.hook_path)
 );
