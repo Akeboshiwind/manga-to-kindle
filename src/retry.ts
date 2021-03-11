@@ -14,7 +14,7 @@ interface NewRetryOptions extends retry.Options {
 /// - Automatically print debug logs on retry
 /// - Throw a Error with a customisable messages when the max
 ///   number of retries has been hit
-const internalRetry = (fn: RetryFunction<any>, opts: NewRetryOptions): Promise<any> => {
+export const internalRetry = (fn: RetryFunction<any>, opts: NewRetryOptions): Promise<any> => {
     // Default retries to 3
     if (opts.retries === undefined) {
         opts.retries = 3;
@@ -44,5 +44,3 @@ const internalRetry = (fn: RetryFunction<any>, opts: NewRetryOptions): Promise<a
         return fn(bail, attempt)
     }, opts)
 }
-
-export default internalRetry;

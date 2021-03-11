@@ -1,5 +1,5 @@
 import fetch from 'node-fetch'
-import retry from './retry'
+import { internalRetry } from './retry'
 
 import d from 'debug'
 const debug = d('mtk:download');
@@ -11,7 +11,7 @@ export async function downloadPages(pageLinks: string[]): Promise<Buffer[]> {
 
     for (const link of pageLinks) {
         debug("Downloading link: %s", link);
-        const pageBuf = await retry(async _bail => {
+        const pageBuf = await internalRetry(async _bail => {
             const resp = await fetch(link);
             return await resp.buffer();
         },{

@@ -1,5 +1,5 @@
 import api from 'mangadex-full-api'
-import retry from './retry'
+import { internalRetry } from './retry'
 import { config } from './config'
 
 import d from 'debug'
@@ -11,7 +11,7 @@ export interface MangaInfo {
     pageLinks: string[],
 }
 
-const client = retry(async (_bail) => {
+const client = internalRetry(async (_bail) => {
     return await api.agent.login(config.mangadex.username,
                            config.mangadex.password,
                            // Don't bother cacheing the login
@@ -29,7 +29,7 @@ export async function getMangaInfo(chapterId: number): Promise<MangaInfo> {
     debug("Loading manga info")
 
     await client;
-    const chapter = await retry(async _bail => {
+    const chapter = await internalRetry(async _bail => {
         const resp = await api.Chapter.get(chapterId);
         // TODO: Work out if still needed
         // @ts-ignore
@@ -42,7 +42,7 @@ export async function getMangaInfo(chapterId: number): Promise<MangaInfo> {
         retryLimitMessage: "Failed to get chapter info from Mangadex",
     });
 
-    const manga = await retry(async _bail => {
+    const manga = await internalRetry(async _bail => {
         // @ts-ignore
         return await api.Manga.get(chapter.parentMangaID)
     }, {
