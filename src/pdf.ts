@@ -46,7 +46,7 @@ export async function buildPDF(pageBuffs: Buffer[]): Promise<NodeJS.ReadableStre
         .createPdf(docDef)
         .getStream({
             progressCallback: (progress) => {
-                debug(`Creating pdf ${progress}%`);
+                debug(`Creating pdf ${progress * 100}%`);
             }
         });
     pdfDoc.end();
