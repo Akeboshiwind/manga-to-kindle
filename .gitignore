@@ -2,6 +2,7 @@
 target/
 converted/
 **/*.pdf
+**/*.zip
 
 
 
