@@ -190,6 +190,7 @@ resource "aws_lambda_function" "lambda" {
   role          = aws_iam_role.lambda_role.arn
   handler       = "bundle.index.handler"
   timeout       = 300
+  memory_size   = 1024
 
   source_code_hash = data.archive_file.lambda_source.output_base64sha256
 
