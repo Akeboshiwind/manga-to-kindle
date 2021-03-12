@@ -45,7 +45,8 @@ node-run: deps.install test.lint
 	 import fs from "fs"; \
 	 async function main() { \
 	     try { \
-			 const info = await manga.getMangaInfo(1210516); \
+			 const info = await manga.getMangaInfo(1217279); \
+			 const baseFileName = info.mangaName + ":" + info.chapterName; \
 			 const fakeInfo: manga.MangaInfo = { \
 	             chapterName: "test chapter", \
 	             mangaName: "test manga", \
@@ -53,8 +54,8 @@ node-run: deps.install test.lint
 			 }; \
 			 const pageFiles = await download.downloadPages(info.pageLinks); \
 			 const pdfStream = await pdf.buildPDF(pageFiles); \
-			 const zipStream = await zip.zipStream(pdfStream, info.mangaName); \
-             const out = `./$${info.mangaName}.zip`; \
+			 const zipStream = await zip.zipStream(pdfStream, `${baseFileName}.pdf`); \
+             const out = `./$${baseFileName}.zip`; \
              const dest = fs.createWriteStream(out); \
 			 zipStream.pipe(dest); \
 			 console.log("%j", dest.path.toString()); \
