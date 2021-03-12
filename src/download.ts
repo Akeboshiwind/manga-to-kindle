@@ -6,21 +6,21 @@ const debug = d('mtk:download');
 
 
 export async function downloadPages(pageLinks: string[]): Promise<Buffer[]> {
-    debug("Downloading pages");
-    const imageBuffs: Buffer[] = [];
+    debug("Downloading %d pages", pageLinks.length);
 
-    for (const link of pageLinks) {
-        debug("Downloading link: %s", link);
-        const pageBuf = await internalRetry(async _bail => {
-            const resp = await fetch(link);
-            return await resp.buffer();
-        },{
-            retryLimitMessage: "Failed to download page image"
-        });
+    // TODO: Try out writing these to disk
+    //       Does this reduce memory usage? (measure)
+    //       Potentially can drop lambda memory usage
+    const imageBufPromises = pageLinks
+        .map(link => {
+            return internalRetry(async _bail => {
+                debug("Downloading link: %s", link);
+                const resp = await fetch(link);
+                return await resp.buffer();
+            },{
+                retryLimitMessage: "Failed to download page image"
+            });
+        })
 
-        imageBuffs.push(pageBuf);
-    }
-
-    debug("%d files downloaded", imageBuffs.length);
-    return imageBuffs;
+    return await Promise.all(imageBufPromises);
 }
