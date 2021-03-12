@@ -26,9 +26,9 @@ $(call make-lazy,TO_EMAIL)
 help:
 	@grep -E '[a-zA-Z\.\-]+:.*?@ .*$$' $(MAKEFILE_LIST) | tr -d '#' | awk 'BEGIN {FS = ":.*?@ "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-#run: @ Run the app locally
-.PHONY: run
-run: deps.install test.lint
+#node-run: @ Run the app locally
+.PHONY: node-run
+node-run: deps.install test.lint
 	BOT_TOKEN="111" \
 	 BOT_HOOK_PATH="111" \
 	 MANGADEX_USERNAME="$(MANGADEX_USERNAME)" \
@@ -39,10 +39,43 @@ run: deps.install test.lint
 	 AWS_REGION="eu-west-3" \
 	 ts-node -e 'import * as manga from "./src/manga"; \
 	 import * as email from "./src/email"; \
+	 import * as download from "./src/download"; \
+	 import * as pdf from "./src/pdf"; \
+	 import * as zip from "./src/zip"; \
+	 import fs from "fs"; \
 	 async function main() { \
-	     const info = await manga.getMangaInfo(1218516); \
-	     await email.emailMangaInfo(info); \
-	 }; main();'
+	     try { \
+			 const info = await manga.getMangaInfo(1210516); \
+			 const fakeInfo: manga.MangaInfo = { \
+	             chapterName: "test chapter", \
+	             mangaName: "test manga", \
+	             pageLinks: ["https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Wikipedia-logo-v2-en.svg/1200px-Wikipedia-logo-v2-en.svg.png"], \
+			 }; \
+			 const pageFiles = await download.downloadPages(info.pageLinks); \
+			 const pdfStream = await pdf.buildPDF(pageFiles); \
+			 const zipStream = await zip.zipStream(pdfStream, info.mangaName); \
+             const out = `./$${info.mangaName}.zip`; \
+             const dest = fs.createWriteStream(out); \
+			 zipStream.pipe(dest); \
+			 console.log("%j", dest.path.toString()); \
+		 } catch (err) { \
+			 console.error(err); \
+		 } \
+	     "await email.emailMangaInfo(info);" \
+	 }; try { main(); } catch (err) { console.error(err) }'
+
+#dist-run: @ Run the app locally
+.PHONY: dist-run
+dist-run: build test.lint
+	BOT_TOKEN="111" \
+	 BOT_HOOK_PATH="111" \
+	 MANGADEX_USERNAME="$(MANGADEX_USERNAME)" \
+	 MANGADEX_PASSWORD="$(MANGADEX_PASSWORD)" \
+	 FROM_EMAIL="mtk@bythe.rocks" \
+	 TO_EMAIL="$(TO_EMAIL)" \
+	 DEBUG="*" \
+	 AWS_REGION="eu-west-3" \
+	 node ./dist/bundle.js
 
 #deps.install: @ Install dependencies
 .PHONY: deps.install
