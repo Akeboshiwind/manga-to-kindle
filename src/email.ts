@@ -11,15 +11,15 @@ const transporter = nodemailer.createTransport({
     SES: ses,
 });
 
-export async function emailMangaPDF(zipStream: NodeJS.ReadableStream, filename: string): Promise<void> {
-    debug("Sending mangaInfo email")
+export async function emailMangaPDF(fileStream: NodeJS.ReadableStream, filename: string): Promise<void> {
+    debug("Sending manga pdf email")
 
     await transporter.sendMail({
         from: config.email.from,
         to: config.email.to,
         attachments: [{
             filename,
-            content: new Readable().wrap(zipStream),
+            content: new Readable().wrap(fileStream),
         }]
     });
 }
