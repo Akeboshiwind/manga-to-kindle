@@ -8,7 +8,8 @@ AWS_ACCOUNT_ID=$(shell gopass show personal/aws/Administrator/amazon.com 'Accoun
 MANGADEX_USERNAME=$(shell gopass show personal/mangadex.org username)
 MANGADEX_PASSWORD=$(shell gopass show --password personal/mangadex.org)
 FROM_EMAIL=mtk@bythe.rocks
-TO_EMAIL=$(shell gopass show personal/google.com username)
+TO_EMAIL=$(shell gopass show personal/amazon.co.uk kindle-email)
+DEV_TO_EMAIL=$(shell gopass show personal/google.com username)
 
 # Make the expensive variables lazy
 make-lazy = $(eval $1 = $$(eval $1 := $(value $(1)))$$($1))
@@ -18,6 +19,7 @@ $(call make-lazy,AWS_ACCOUNT_ID)
 $(call make-lazy,MANGADEX_USERNAME)
 $(call make-lazy,MANGADEX_PASSWORD)
 $(call make-lazy,TO_EMAIL)
+$(call make-lazy,DEV_TO_EMAIL)
 
 
 
@@ -34,7 +36,7 @@ node-run: deps.install test.lint
 	 MANGADEX_USERNAME="$(MANGADEX_USERNAME)" \
 	 MANGADEX_PASSWORD="$(MANGADEX_PASSWORD)" \
 	 FROM_EMAIL="mtk@bythe.rocks" \
-	 TO_EMAIL="$(TO_EMAIL)" \
+	 TO_EMAIL="$(DEV_TO_EMAIL)" \
 	 DEBUG="*" \
 	 AWS_REGION="eu-west-3" \
 	 ts-node -e 'import * as manga from "./src/manga"; \
@@ -73,7 +75,7 @@ dist-run: build test.lint
 	 MANGADEX_USERNAME="$(MANGADEX_USERNAME)" \
 	 MANGADEX_PASSWORD="$(MANGADEX_PASSWORD)" \
 	 FROM_EMAIL="mtk@bythe.rocks" \
-	 TO_EMAIL="$(TO_EMAIL)" \
+	 TO_EMAIL="$(DEV_TO_EMAIL)" \
 	 DEBUG="*" \
 	 AWS_REGION="eu-west-3" \
 	 node ./dist/bundle.js
