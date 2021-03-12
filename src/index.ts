@@ -20,21 +20,23 @@ bot.hears(manga.chapterURLRegex, async (ctx) => {
     debug("Mangadex chapter link detected");
     const chapterId = parseInt(ctx.match[1], 10);
     const info = await manga.getMangaInfo(chapterId);
+    const baseFilename = info.mangaName;
+    const pdfFilename = `${baseFilename}.pdf`;
+    const zipFilename = `${baseFilename}.zip`;
     debug("Got manga info");
 
     const pageBuffs = await download.downloadPages(info.pageLinks);
     debug("Got pages");
     const pdfStream = await pdf.buildPDF(pageBuffs);
     debug("Got build pdf");
-    // TODO: Change name
-    const zipStream = await zip.zipStream(pdfStream, info.mangaName);
+
+    const zipStream = await zip.zipStream(pdfStream, pdfFilename);
     debug("Got zip");
 
-    await email.emailMangaPDF(zipStream, info);
+    await email.emailMangaPDF(zipStream, zipFilename);
 
-    debug("Replying to message with chapter info");
-
-    ctx.reply(format("%j", info));
+    debug("Replying to message with confirmation");
+    ctx.reply(format("Successfully packaged and sent %s", zipFilename));
 });
 
 bot.on('text', async (ctx) => {
