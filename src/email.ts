@@ -1,6 +1,5 @@
 import nodemailer from 'nodemailer'
 import SES from 'aws-sdk/clients/ses'
-import { MangaInfo } from './manga'
 import { config } from './config'
 import { Readable } from 'stream'
 
@@ -17,8 +16,7 @@ export async function emailMangaPDF(zipStream: NodeJS.ReadableStream, filename: 
 
     await transporter.sendMail({
         from: config.email.from,
-        to: "olivershawmarshall@gmail.com",
-        subject: "Manga Info",
+        to: config.email.to,
         attachments: [{
             filename,
             content: new Readable().wrap(zipStream),
