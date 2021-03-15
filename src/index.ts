@@ -39,7 +39,7 @@ bot.hears(manga.chapterURLRegex, async (ctx) => {
     debug("Got zip");
 
     // >> Send email
-    await email.emailMangaPDF(zipStream, zipFilename);
+    await email.emailStream(zipStream, zipFilename);
 
     // >> Replying
     debug("Replying to message with confirmation");

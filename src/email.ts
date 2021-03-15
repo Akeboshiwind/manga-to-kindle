@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
     SES: ses,
 });
 
-export async function emailMangaPDF(fileStream: NodeJS.ReadableStream, filename: string): Promise<void> {
+export async function emailStream(fileStream: NodeJS.ReadableStream, filename: string): Promise<void> {
     debug("Sending manga pdf email")
 
     await transporter.sendMail({
