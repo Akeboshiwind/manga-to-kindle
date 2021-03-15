@@ -21,7 +21,7 @@ bot.hears(manga.chapterURLRegex, async (ctx) => {
     // >> Get manga info
     const chapterId = parseInt(ctx.match[1], 10);
     const info = await manga.getMangaInfo(chapterId);
-    const baseFilename = info.mangaName + ":" + info.chapterName;
+    const baseFilename = info.mangaName + "_" + info.chapterName;
     const pdfFilename = `${baseFilename}.pdf`;
     const zipFilename = `${baseFilename}.zip`;
     debug("Got manga info");
